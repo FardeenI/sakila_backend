@@ -1,0 +1,54 @@
+import mysql from 'mysql2'
+import dotenv from 'dotenv'
+dotenv.config()
+
+const pool = mysql.createPool({
+    host: process.env.MYSQL_HOST, 
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE
+}).promise()
+
+export async function getFilms() {
+    const [resultRows] = await pool.query("SELECT * FROM film")
+    return resultRows
+}
+
+export async function getTop5Films() {
+    const [top5FilmRows] = await pool.query(`SELECT film.film_id, film.title, film.description, film.release_year, film.rating, category.name AS genre, COUNT(rental.inventory_id) AS rented FROM film, film_category, category, inventory, rental WHERE
+rental.inventory_id = inventory.inventory_id AND 
+inventory.film_id = film.film_id AND film.film_id = film_category.film_id
+AND film_category.category_id = category.category_id GROUP BY film.film_id, category.category_id ORDER BY rented DESC LIMIT 5;`)
+        return top5FilmRows
+}
+
+export async function getFilm(id) {
+    const [resultRow] = await pool.query(`
+        SELECT * 
+        FROM film 
+        WHERE film_id = ?`, [id])
+        return resultRow[0]
+}
+
+export async function getCustomer(id) {
+    const [resultRow] = await pool.query(`
+        SELECT * 
+        FROM customer 
+        WHERE customer_id = ?`, [id])
+        return resultRow[0]
+}
+
+
+// The following is a reference for how to define a CREATE function for POST requests, don't actually invoke to modify sakila db too much
+export async function createCustomer(customer_id, store_id, first_name, last_name, email, address_id, active, create_date) {
+    const [resultCustomerCreate] = await pool.query(`
+        INSERT INTO customer (customer_id, store_id, first_name, last_name, email, address_id, active, create_date)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `, [customer_id, store_id, first_name, last_name, email, address_id, active, create_date])
+        return getCustomer(customer_id)
+}
+
+// CREATE FIRST CALL
+// const userCreate = await createCustomer(600,1,'Fardeen','Iqbal','fi43@njit.edu',605,1,'2025-02-8 10:09:00')
+// CREATE USER SECOND CALL
+// const userCreate = await createCustomer(601,1,'Aidan','Barrera','ab43@njit.edu',605,1,'2025-02-8 10:012:00')
