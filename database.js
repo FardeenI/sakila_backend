@@ -19,7 +19,25 @@ export async function getTop5Films() {
 rental.inventory_id = inventory.inventory_id AND 
 inventory.film_id = film.film_id AND film.film_id = film_category.film_id
 AND film_category.category_id = category.category_id GROUP BY film.film_id, category.category_id ORDER BY rented DESC LIMIT 5;`)
-        return top5FilmRows
+    return top5FilmRows
+}
+
+export async function getTop5Actors() {
+    const [top5FilmActors] = await pool.query(`SELECT actor.actor_id, actor.first_name, actor.last_name, COUNT(film_id) AS rented FROM actor,film_actor WHERE actor.actor_id = film_actor.actor_id GROUP BY actor_id ORDER BY rented DESC LIMIT 5;`)
+    return top5FilmActors
+}
+
+export async function getActorsTop5(actor_id) {
+    const [actorsTop5Films] = await pool.query(`SELECT film.film_id, film.title, COUNT(rental.inventory_id) AS rental_count FROM film, rental, inventory, film_actor WHERE 
+film.film_id = inventory.film_id AND film.film_id = film_actor.film_id AND inventory.film_id = film_actor.film_id
+AND rental.inventory_id = inventory.inventory_id AND film_actor.actor_id = ? GROUP BY film.film_id ORDER BY rental_count DESC LIMIT 5;
+`
+        , [actor_id])
+    return actorsTop5Films
+
+    
+
+
 }
 
 export async function getFilm(id) {
@@ -27,7 +45,7 @@ export async function getFilm(id) {
         SELECT * 
         FROM film 
         WHERE film_id = ?`, [id])
-        return resultRow[0]
+    return resultRow[0]
 }
 
 export async function getCustomer(id) {
@@ -35,7 +53,7 @@ export async function getCustomer(id) {
         SELECT * 
         FROM customer 
         WHERE customer_id = ?`, [id])
-        return resultRow[0]
+    return resultRow[0]
 }
 
 
@@ -45,7 +63,7 @@ export async function createCustomer(customer_id, store_id, first_name, last_nam
         INSERT INTO customer (customer_id, store_id, first_name, last_name, email, address_id, active, create_date)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `, [customer_id, store_id, first_name, last_name, email, address_id, active, create_date])
-        return getCustomer(customer_id)
+    return getCustomer(customer_id)
 }
 
 // CREATE FIRST CALL

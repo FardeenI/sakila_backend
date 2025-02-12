@@ -1,14 +1,25 @@
 import express from 'express'
-import { getFilms, getTop5Films, getFilm, getCustomer, createCustomer } from './database.js'
+import { getFilms, getTop5Films, getTop5Actors, getActorsTop5, getFilm, getCustomer, createCustomer } from './database.js'
 import cors from 'cors'
 
 const app = express()
 app.use(express.json())
 app.use(cors())
 
-app.get("/", async (req, res) => {
+app.get("/films/top5films", async (req, res) => {
     const top5films = await getTop5Films()
     res.send(top5films)
+})
+
+app.get("/actors/top5actors", async (req, res) => {
+    const top5actors = await getTop5Actors()
+    res.send(top5actors)
+})
+
+app.get("/actors/:id/top5films", async (req, res) => {
+    const actor_id = req.params.id
+    const actorsTop5 = await getActorsTop5(actor_id)
+    res.send(actorsTop5)
 })
 
 app.get("/films", async (req, res) => {
