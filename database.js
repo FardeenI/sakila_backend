@@ -34,10 +34,6 @@ AND rental.inventory_id = inventory.inventory_id AND film_actor.actor_id = ? GRO
 `
         , [actor_id])
     return actorsTop5Films
-
-    
-
-
 }
 
 export async function getFilm(id) {
@@ -46,6 +42,11 @@ export async function getFilm(id) {
         FROM film 
         WHERE film_id = ?`, [id])
     return resultRow[0]
+}
+
+export async function getCustomers() {
+    const [customerResultRows] = await pool.query("SELECT * FROM customer")
+    return customerResultRows
 }
 
 export async function getCustomer(id) {
