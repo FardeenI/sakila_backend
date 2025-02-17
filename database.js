@@ -14,6 +14,13 @@ export async function getFilms() {
     return resultRows
 }
 
+export async function getFilmsWGenre() {
+    const [resultRows] = await pool.query(`SELECT film.film_id, film.title, film.description, film.rating, film.special_features, film.release_year, category.name AS genre FROM film, film_category, category WHERE
+ film.film_id = film_category.film_id AND film_category.category_id = category.category_id GROUP BY film.film_id, category.category_id ORDER BY film.film_id;`)
+    return resultRows
+}
+
+
 export async function getTop5Films() {
     const [top5FilmRows] = await pool.query(`SELECT film.film_id, film.title, film.description, film.release_year, film.rating, category.name AS genre, COUNT(rental.inventory_id) AS rented FROM film, film_category, category, inventory, rental WHERE
 rental.inventory_id = inventory.inventory_id AND 
@@ -35,6 +42,16 @@ AND rental.inventory_id = inventory.inventory_id AND film_actor.actor_id = ? GRO
         , [actor_id])
     return actorsTop5Films
 }
+
+export async function getActorsFilms(actor_id) {
+    const [actorsTop5Films] = await pool.query(`SELECT film.film_id, film.title, film_actor.actor_id, actor.first_name, actor.last_name FROM film, film_actor, actor WHERE 
+film.film_id = film_actor.film_id AND film_actor.actor_id = ? AND film_actor.actor_id = actor.actor_id;
+`
+        , [actor_id])
+    return actorsTop5Films
+}
+
+
 
 export async function getFilm(id) {
     const [resultRow] = await pool.query(`
