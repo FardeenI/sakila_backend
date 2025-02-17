@@ -10,7 +10,7 @@ const pool = mysql.createPool({
 }).promise()
 
 export async function getFilms() {
-    const [resultRows] = await pool.query("SELECT * FROM film")
+    const [resultRows] = await pool.query(`SELECT * FROM film`)
     return resultRows
 }
 
@@ -20,6 +20,15 @@ export async function getFilmsWGenre() {
     return resultRows
 }
 
+export async function getFilmsGenreActorsByActors() {
+    const [resultRows] = await pool.query(`SELECT film.film_id, film.title, film.description, category.name AS genre, film.rating, film.release_year, film.rental_rate, film.length, film.replacement_cost, film.special_features, actor.actor_id, CONCAT(actor.first_name, ' ', actor.last_name) AS actor_name FROM film, film_actor, actor, film_category, category WHERE film.film_id = film_actor.film_id AND film_actor.actor_id = actor.actor_id AND film.film_id = film_category.film_id AND film_category.category_id = category.category_id GROUP BY film.film_id, category.category_id, actor.actor_id ORDER BY actor.actor_id;`)
+    return resultRows
+}
+
+export async function getFilmsGenreActorsByFilms() {
+    const [resultRows] = await pool.query(`SELECT film.film_id, film.title, film.description, category.name AS genre, film.rating, film.release_year, film.rental_rate, film.length, film.replacement_cost, film.special_features, actor.actor_id, CONCAT(actor.first_name, ' ', actor.last_name) AS actor_name FROM film, film_actor, actor, film_category, category WHERE film.film_id = film_actor.film_id AND film_actor.actor_id = actor.actor_id AND film.film_id = film_category.film_id AND film_category.category_id = category.category_id GROUP BY film.film_id, category.category_id, actor.actor_id ORDER BY film.film_id;`)
+    return resultRows
+}
 
 export async function getTop5Films() {
     const [top5FilmRows] = await pool.query(`SELECT film.film_id, film.title, film.description, film.release_year, film.rating, category.name AS genre, COUNT(rental.inventory_id) AS rented FROM film, film_category, category, inventory, rental WHERE
@@ -62,7 +71,7 @@ export async function getFilm(id) {
 }
 
 export async function getCustomers() {
-    const [customerResultRows] = await pool.query("SELECT * FROM customer")
+    const [customerResultRows] = await pool.query(`SELECT * FROM customer`)
     return customerResultRows
 }
 
