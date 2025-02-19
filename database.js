@@ -15,8 +15,7 @@ export async function getFilms() {
 }
 
 export async function getFilmsWGenre() {
-    const [resultRows] = await pool.query(`SELECT film.film_id, film.title, film.description, film.rating, film.special_features, film.release_year, category.name AS genre FROM film, film_category, category WHERE
- film.film_id = film_category.film_id AND film_category.category_id = category.category_id GROUP BY film.film_id, category.category_id ORDER BY film.film_id;`)
+    const [resultRows] = await pool.query(`SELECT film.film_id, film.title, film.description, film.rating, film.special_features, film.release_year, category.name AS genre FROM film, film_category, category WHERE film.film_id = film_category.film_id AND film_category.category_id = category.category_id GROUP BY film.film_id, category.category_id ORDER BY film.film_id;`)
     return resultRows
 }
 
@@ -31,10 +30,7 @@ export async function getFilmsGenreActorsByFilms() {
 }
 
 export async function getTop5Films() {
-    const [top5FilmRows] = await pool.query(`SELECT film.film_id, film.title, film.description, film.release_year, film.rating, category.name AS genre, COUNT(rental.inventory_id) AS rented FROM film, film_category, category, inventory, rental WHERE
-rental.inventory_id = inventory.inventory_id AND 
-inventory.film_id = film.film_id AND film.film_id = film_category.film_id
-AND film_category.category_id = category.category_id GROUP BY film.film_id, category.category_id ORDER BY rented DESC LIMIT 5;`)
+    const [top5FilmRows] = await pool.query(`SELECT film.film_id, film.title, film.description, film.release_year, film.rating, category.name AS genre, COUNT(rental.inventory_id) AS rented FROM film, film_category, category, inventory, rental WHERE rental.inventory_id = inventory.inventory_id AND inventory.film_id = film.film_id AND film.film_id = film_category.film_id AND film_category.category_id = category.category_id GROUP BY film.film_id, category.category_id ORDER BY rented DESC LIMIT 5;`)
     return top5FilmRows
 }
 
@@ -44,29 +40,22 @@ export async function getTop5Actors() {
 }
 
 export async function getActorsTop5(actor_id) {
-    const [actorsTop5Films] = await pool.query(`SELECT film.film_id, film.title, COUNT(rental.inventory_id) AS rental_count FROM film, rental, inventory, film_actor WHERE 
-film.film_id = inventory.film_id AND film.film_id = film_actor.film_id AND inventory.film_id = film_actor.film_id
-AND rental.inventory_id = inventory.inventory_id AND film_actor.actor_id = ? GROUP BY film.film_id ORDER BY rental_count DESC LIMIT 5;
-`
-        , [actor_id])
+    const [actorsTop5Films] = await pool.query(`SELECT film.film_id, film.title, COUNT(rental.inventory_id) AS rental_count FROM film, rental, inventory, film_actor WHERE film.film_id = inventory.film_id AND film.film_id = film_actor.film_id AND inventory.film_id = film_actor.film_id AND rental.inventory_id = inventory.inventory_id AND film_actor.actor_id = ? GROUP BY film.film_id ORDER BY rental_count DESC LIMIT 5;`
+    , [actor_id])
     return actorsTop5Films
 }
 
 export async function getActorsFilms(actor_id) {
-    const [actorsTop5Films] = await pool.query(`SELECT film.film_id, film.title, film_actor.actor_id, actor.first_name, actor.last_name FROM film, film_actor, actor WHERE 
-film.film_id = film_actor.film_id AND film_actor.actor_id = ? AND film_actor.actor_id = actor.actor_id;
-`
-        , [actor_id])
+    const [actorsTop5Films] = await pool.query(`SELECT film.film_id, film.title, film_actor.actor_id, actor.first_name, actor.last_name FROM film, film_actor, actor WHERE film.film_id = film_actor.film_id AND film_actor.actor_id = ? AND film_actor.actor_id = actor.actor_id;`
+    , [actor_id])
     return actorsTop5Films
 }
 
 
 
 export async function getFilm(id) {
-    const [resultRow] = await pool.query(`
-        SELECT * 
-        FROM film 
-        WHERE film_id = ?`, [id])
+    const [resultRow] = await pool.query(`SELECT * FROM film WHERE film_id = ?`
+    , [id])
     return resultRow[0]
 }
 
@@ -76,20 +65,16 @@ export async function getCustomers() {
 }
 
 export async function getCustomer(id) {
-    const [resultRow] = await pool.query(`
-        SELECT * 
-        FROM customer 
-        WHERE customer_id = ?`, [id])
+    const [resultRow] = await pool.query(`SELECT * FROM customer WHERE customer_id = ?`
+    , [id])
     return resultRow[0]
 }
 
 
 // The following is a reference for how to define a CREATE function for POST requests, don't actually invoke to modify sakila db too much
 export async function createCustomer(customer_id, store_id, first_name, last_name, email, address_id, active, create_date) {
-    const [resultCustomerCreate] = await pool.query(`
-        INSERT INTO customer (customer_id, store_id, first_name, last_name, email, address_id, active, create_date)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `, [customer_id, store_id, first_name, last_name, email, address_id, active, create_date])
+    const [resultCustomerCreate] = await pool.query(`INSERT INTO customer (customer_id, store_id, first_name, last_name, email, address_id, active, create_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    , [customer_id, store_id, first_name, last_name, email, address_id, active, create_date])
     return getCustomer(customer_id)
 }
 
