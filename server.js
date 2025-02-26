@@ -1,5 +1,5 @@
 import express from 'express'
-import { getFilms, getTop5Films, getTop5Actors, getActorsTop5, getFilm, getFilmsWGenre, getFilmsGenreActorsByActors, getFilmsGenreActorsByFilms, getCustomers, getCustomer, createCustomer } from './database.js'
+import { getFilms, getTop5Films, getTop5Actors, getActorsTop5, getFilm, getRentableCopies, getFilmsWGenre, getFilmsGenreActorsByActors, getFilmsGenreActorsByFilms, getCustomers, getCustomer, createCustomer } from './database.js'
 import cors from 'cors'
 
 const app = express()
@@ -25,6 +25,12 @@ app.get("/actors/:id/top5films", async (req, res) => {
     res.send(actorsTop5)
 })
 
+
+app.get("/films/:id/rentable", async (req, res) => {
+    const film_id = req.params.id
+    const rentableCopies = await getRentableCopies(film_id)
+    res.send(rentableCopies)
+})
 
 app.get("/films/:id", async (req, res) => {
     const id = req.params.id

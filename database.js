@@ -51,12 +51,16 @@ export async function getActorsFilms(actor_id) {
     return actorsTop5Films
 }
 
-
-
 export async function getFilm(id) {
     const [resultRow] = await pool.query(`SELECT * FROM film WHERE film_id = ?`
     , [id])
     return resultRow[0]
+}
+
+export async function getRentableCopies(film_id) {
+    const [rentableCopies] = await pool.query(`SELECT DISTINCT inventory.film_id, rental.inventory_id AS 'rentableID' FROM rental, inventory WHERE rental.inventory_id=inventory.inventory_id AND inventory.film_id=? AND rental.inventory_id NOT IN (SELECT rental.inventory_id FROM rental WHERE rental.return_date IS NULL);`
+    , [film_id])
+    return rentableCopies
 }
 
 export async function getCustomers() {
