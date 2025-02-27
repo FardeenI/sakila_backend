@@ -82,7 +82,16 @@ export async function createCustomer(customer_id, store_id, first_name, last_nam
     return getCustomer(customer_id)
 }
 
+export async function rentMovie(inventory_id, customer_id) {
+    const [resultRental] = await pool.query(`INSERT INTO rental (rental_date, inventory_id, customer_id, return_date, staff_id) VALUES (CURRENT_TIMESTAMP, ?, ?, NULL, 1)`
+    , [inventory_id, customer_id])
+    resultRental[0]
+}
+
 // CREATE FIRST CALL
 // const userCreate = await createCustomer(600,1,'Fardeen','Iqbal','fi43@njit.edu',605,1,'2025-02-8 10:09:00')
 // CREATE USER SECOND CALL
 // const userCreate = await createCustomer(601,1,'Aidan','Barrera','ab43@njit.edu',605,1,'2025-02-8 10:012:00')
+// CREATE RENTAL FIRST CALL
+//const createRental = await rentMovie(19, 600)
+//console.log(createRental)
