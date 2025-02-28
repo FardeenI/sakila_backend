@@ -68,6 +68,11 @@ export async function getCustomers() {
     return customerResultRows
 }
 
+export async function getCustomerIDs() {
+    const [customerResultRows] = await pool.query(`SELECT customer_id FROM customer`)
+    return customerResultRows
+}
+
 export async function getCustomer(id) {
     const [resultRow] = await pool.query(`SELECT * FROM customer WHERE customer_id = ?`
     , [id])
@@ -85,7 +90,7 @@ export async function createCustomer(customer_id, store_id, first_name, last_nam
 export async function rentMovie(inventory_id, customer_id) {
     const [resultRental] = await pool.query(`INSERT INTO rental (rental_date, inventory_id, customer_id, return_date, staff_id) VALUES (CURRENT_TIMESTAMP, ?, ?, NULL, 1)`
     , [inventory_id, customer_id])
-    resultRental[0]
+    return resultRental[0]
 }
 
 // CREATE FIRST CALL
