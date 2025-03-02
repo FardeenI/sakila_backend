@@ -79,8 +79,8 @@ app.get("/customers/:id", async (req, res) => {
 
 
 app.post("/customers", async (req, res) => {
-    const { customer_id, store_id, first_name, last_name, email, address_id, active, create_date } = req.body
-    const newCustomer = await createCustomer(customer_id, store_id, first_name, last_name, email, address_id, active, create_date)
+    const { first_name, last_name, email } = req.body
+    const newCustomer = await createCustomer(first_name, last_name, email)
     res.status(201).send(newCustomer)
 })
 

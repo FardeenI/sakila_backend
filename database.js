@@ -81,10 +81,10 @@ export async function getCustomer(id) {
 
 
 // The following is a reference for how to define a CREATE function for POST requests, don't actually invoke to modify sakila db too much
-export async function createCustomer(customer_id, store_id, first_name, last_name, email, address_id, active, create_date) {
-    const [resultCustomerCreate] = await pool.query(`INSERT INTO customer (customer_id, store_id, first_name, last_name, email, address_id, active, create_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-    , [customer_id, store_id, first_name, last_name, email, address_id, active, create_date])
-    return getCustomer(customer_id)
+export async function createCustomer(first_name, last_name, email) {
+    const [resultCustomerCreate] = await pool.query(`INSERT INTO customer (store_id, first_name, last_name, email, address_id, active, create_date) VALUES (1, ?, ?, ?, 605, 1, CURRENT_TIMESTAMP)`
+    , [first_name, last_name, email])
+    return resultCustomerCreate
 }
 
 export async function rentMovie(inventory_id, customer_id) {
