@@ -69,8 +69,8 @@ export async function getCustomers() {
 }
 
 export async function getCustomerIDs() {
-    const [customerResultRows] = await pool.query(`SELECT customer_id FROM customer`)
-    return customerResultRows
+    const [customerIDResultRows] = await pool.query(`SELECT customer_id FROM customer`)
+    return customerIDResultRows
 }
 
 export async function getCustomer(id) {
@@ -78,7 +78,6 @@ export async function getCustomer(id) {
     , [id])
     return resultRow[0]
 }
-
 
 // The following is a reference for how to define a CREATE function for POST requests, don't actually invoke to modify sakila db too much
 export async function createCustomer(first_name, last_name, email) {
@@ -91,6 +90,23 @@ export async function rentMovie(inventory_id, customer_id) {
     const [resultRental] = await pool.query(`INSERT INTO rental (rental_date, inventory_id, customer_id, return_date, staff_id) VALUES (CURRENT_TIMESTAMP, ?, ?, NULL, 1)`
     , [inventory_id, customer_id])
     return resultRental[0]
+}
+
+export async function getRentalIDs() {
+    const [rentalIDResultRows] = await pool.query(`SELECT rental_id FROM rental`)
+    return rentalIDResultRows
+}
+
+export async function returnMovie(rental_id, customer_id) {
+    const [returnResult] = await pool.query(`UPDATE rental SET return_date = CURRENT_TIMESTAMP WHERE rental_id=? AND customer_id=?;`
+    , [rental_id, customer_id])
+    console.log("Database update result:", returnResult);
+    return returnResult
+}
+
+export async function getReturnedRentals() {
+    const [returnedResult] = await pool.query(`SELECT rental_id FROM rental WHERE return_date IS NOT NULL;`)
+    return returnedResult
 }
 
 // CREATE FIRST CALL

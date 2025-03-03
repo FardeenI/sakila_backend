@@ -1,5 +1,5 @@
 import express from 'express'
-import { getFilms, getTop5Films, getTop5Actors, getActorsTop5, getFilm, getRentableCopies, getFilmsWGenre, getFilmsGenreActorsByActors, getFilmsGenreActorsByFilms, getCustomers, getCustomer, createCustomer, rentMovie, getCustomerIDs } from './database.js'
+import { getFilms, getTop5Films, getTop5Actors, getActorsTop5, getFilm, getRentableCopies, getFilmsWGenre, getFilmsGenreActorsByActors, getFilmsGenreActorsByFilms, getCustomers, getCustomer, createCustomer, rentMovie, returnMovie, getCustomerIDs, getRentalIDs, getReturnedRentals } from './database.js'
 import cors from 'cors'
 
 const app = express()
@@ -60,7 +60,6 @@ app.get("/actors/top5actors", async (req, res) => {
     res.send(top5actors)
 })
 
-
 app.get("/customers", async (req, res) => {
     const customers = await getCustomers()
     res.send(customers)
@@ -71,12 +70,21 @@ app.get("/customerIDs", async (req, res) => {
     res.send(customerIDs)
 })
 
+app.get("/rentalIDs", async (req, res) => {
+    const rentalIDs = await getRentalIDs()
+    res.send(rentalIDs)
+})
+
+app.get("/returned", async (req, res) => {
+    const returned = await getReturnedRentals()
+    res.send(returned)
+})
+
 app.get("/customers/:id", async (req, res) => {
     const id = req.params.id
     const customer = await getCustomer(id)
     res.send(customer)
 })
-
 
 app.post("/customers", async (req, res) => {
     const { first_name, last_name, email } = req.body
@@ -88,6 +96,15 @@ app.post("/rentAmovie", async(req, res) => {
     const { rentableID, customer_id } = req.body
     const newRental = await rentMovie(rentableID, customer_id)
     res.status(201).send(newRental)
+})
+
+app.put("/returnMovie/:customer_id", async(req, res) => {
+    const customer_id = req.params.customer_id
+    console.log("Customer ID:" + customer_id)
+    const { rental_id } = req.body
+    console.log("Received rental_id: ", rental_id)
+    const returnResult = await returnMovie(rental_id, customer_id)
+    res.status(201).send(returnResult)
 })
 
 app.use((err, req, res, next) => {
