@@ -114,3 +114,10 @@ export async function getRentals(customer_id) {
     , [customer_id])
     return rentalsResult
 }
+
+export async function updateCustomer(first_name, last_name, email, customer_id) {
+    const [updateResult] = await pool.query(`UPDATE customer SET first_name=?, last_name=?, email=? WHERE customer_id=?;`
+    , [first_name, last_name, email, customer_id])
+    console.log("Database update result:", updateResult);
+    return updateResult
+}

@@ -1,5 +1,5 @@
 import express from 'express'
-import { getFilms, getTop5Films, getTop5Actors, getActorsTop5, getFilm, getRentableCopies, getFilmsWGenre, getFilmsGenreActorsByActors, getFilmsGenreActorsByFilms, getCustomers, getCustomer, createCustomer, rentMovie, returnMovie, getCustomerIDs, getRentalIDs, getReturnedRentals, getRentals} from './database.js'
+import { getFilms, getTop5Films, getTop5Actors, getActorsTop5, getFilm, getRentableCopies, getFilmsWGenre, getFilmsGenreActorsByActors, getFilmsGenreActorsByFilms, getCustomers, getCustomer, createCustomer, rentMovie, returnMovie, getCustomerIDs, getRentalIDs, getReturnedRentals, getRentals, updateCustomer} from './database.js'
 import cors from 'cors'
 
 const app = express()
@@ -113,6 +113,18 @@ app.put("/returnMovie/:customer_id", async(req, res) => {
     console.log("Received rental_id: ", rental_id)
     const returnResult = await returnMovie(rental_id, customer_id)
     res.status(201).send(returnResult)
+})
+
+app.put("/updateCustomer/:customer_id", async(req, res) => {
+    try {
+    const customer_id = req.params.customer_id
+    const { first_name, last_name, email } = req.body
+    const updateResult = await updateCustomer(first_name, last_name, email, customer_id)
+    res.status(201).send(updateResult)
+    }
+    catch(error) {
+        res.status(500).send(error).json({"message":first_name+last_name})
+    }
 })
 
 app.use((err, req, res, next) => {
