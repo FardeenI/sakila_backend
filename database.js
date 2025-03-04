@@ -109,10 +109,8 @@ export async function getReturnedRentals() {
     return returnedResult
 }
 
-// CREATE FIRST CALL
-// const userCreate = await createCustomer(600,1,'Fardeen','Iqbal','fi43@njit.edu',605,1,'2025-02-8 10:09:00')
-// CREATE USER SECOND CALL
-// const userCreate = await createCustomer(601,1,'Aidan','Barrera','ab43@njit.edu',605,1,'2025-02-8 10:012:00')
-// CREATE RENTAL FIRST CALL
-//const createRental = await rentMovie(19, 600)
-//console.log(createRental)
+export async function getRentals(customer_id) {
+    const [rentalsResult] = await pool.query(`SELECT rental.rental_id, rental.inventory_id, rental.rental_date, rental.return_date FROM rental WHERE rental.customer_id=? ORDER BY rental.rental_date DESC;`
+    , [customer_id])
+    return rentalsResult
+}
