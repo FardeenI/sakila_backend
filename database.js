@@ -121,3 +121,10 @@ export async function updateCustomer(first_name, last_name, email, customer_id) 
     console.log("Database update result:", updateResult);
     return updateResult
 }
+
+export async function deleteCustomer(customer_id) {
+    const [deleteResult] = await pool.query(`DELETE FROM customer WHERE customer_id=?;`
+    , [customer_id])
+    console.log("Database delete result:", deleteResult);
+    return deleteResult
+}

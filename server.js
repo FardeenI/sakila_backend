@@ -1,5 +1,5 @@
 import express from 'express'
-import { getFilms, getTop5Films, getTop5Actors, getActorsTop5, getFilm, getRentableCopies, getFilmsWGenre, getFilmsGenreActorsByActors, getFilmsGenreActorsByFilms, getCustomers, getCustomer, createCustomer, rentMovie, returnMovie, getCustomerIDs, getRentalIDs, getReturnedRentals, getRentals, updateCustomer} from './database.js'
+import { getFilms, getTop5Films, getTop5Actors, getActorsTop5, getFilm, getRentableCopies, getFilmsWGenre, getFilmsGenreActorsByActors, getFilmsGenreActorsByFilms, getCustomers, getCustomer, createCustomer, rentMovie, returnMovie, getCustomerIDs, getRentalIDs, getReturnedRentals, getRentals, updateCustomer, deleteCustomer} from './database.js'
 import cors from 'cors'
 
 const app = express()
@@ -126,6 +126,13 @@ app.put("/updateCustomer/:customer_id", async(req, res) => {
         res.status(500).send(error).json({"message":first_name+last_name})
     }
 })
+
+app.delete("/deleteCustomer/:customer_id", async(req, res) => {
+    const customer_id = req.params.customer_id
+    const deleteResult = await deleteCustomer(customer_id)
+    res.status(204).send(deleteResult)
+})
+
 
 app.use((err, req, res, next) => {
     console.error(err.stack)
